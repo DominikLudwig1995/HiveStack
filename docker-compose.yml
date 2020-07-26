@@ -1,0 +1,29 @@
+version: '3.4'
+services:
+  mariadb:
+    image: mariadb:10.5.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: metastore
+      MYSQL_USER: hive
+      MYSQL_PASSWORD: hive
+    restart: on-failure
+    ports:
+     - '3306:3306'
+    networks:
+      - hadoop
+    volumes:
+     - ${PWD}/mariadb:/var/lib/mysql
+
+  hivedb:
+    image: hive-metastore:master
+    restart: on-failure
+    ports:
+     - '10000:10000'
+     - '9083:9083'
+    networks:
+      - hadoop
+
+networks:
+  hadoop:
+    external: false
