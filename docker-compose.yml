@@ -7,13 +7,14 @@ services:
       MYSQL_DATABASE: metastore
       MYSQL_USER: hive
       MYSQL_PASSWORD: hive
+      character-set-server: latin1
     restart: on-failure
     ports:
      - '3306:3306'
     networks:
       - hadoop
     volumes:
-     - ${PWD}/mariadb:/var/lib/mysql
+     - ${PWD}/data/mariadb:/var/lib/mysql
 
   hivedb:
     image: hive-metastore:master
@@ -23,7 +24,60 @@ services:
      - '9083:9083'
     networks:
       - hadoop
+    volumes:
+      - ${PWD}/data/hive/conf:/opt/apache-hive-3.1.2-bin/conf
+      - ${PWD}/data/hive/udf:/opt/apache-hive-3.1.2-bin/udf
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    privileged: true
+    user: root
+    ports:
+      - 8081:8080
+      - 50000:50000
+    networks:
+      - hadoop
+    container_name: jenkins
+    volumes:
+      - ${PWD}/data/jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/local/bin/docker:/usr/local/bin/docker
+      - ${PWD}/data/hive/udf:/var/jenkins_home/udf
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "8090:8090"
+    volumes:
+      - ${PWD}/data/influx:/var/lib/influxdb
+    networks:
+      - monitoring
+
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf
+    networks:
+      - monitoring
+      - hadoop
+    volumes:
+      - ${PWD}/data/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3030:3000"
+    user: "0"
+    networks:
+      - monitoring
+    volumes:
+      - ${PWD}/data/grafana:/var/lib/grafana
 
 networks:
   hadoop:
+    external: false
+  monitoring:
     external: false

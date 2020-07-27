@@ -28,7 +28,10 @@ RUN apt-get update && \
 
 # MySQL
 RUN  apt-get install -y libmariadb-java mariadb-client && \
-    ln -s /usr/share/java/mariadb-java-client.jar $HIVE_HOME/lib/mariadb-java-client.jar
+    ln -s /usr/share/java/mariadb-java-client.jar ${HIVE_HOME}/lib/mariadb-java-client.jar
+
+# Bugfix
+RUN mkdir /tmp/hive && chmod 777 -R /tmp/hive && chown hive:hive -R /tmp/hive
 
 # Usersettings
 USER hive
@@ -36,5 +39,5 @@ WORKDIR $HIVE_HOME
 EXPOSE 9083 10000
 
 # Endpoint
-ENTRYPOINT ["bin/hive"]
-CMD ["--service", "metastore"]
+ENTRYPOINT ["/bin/bash"]
+CMD ["/opt/apache-hive-3.1.2-bin/bin/hiveserver2"]
