@@ -13,6 +13,9 @@ RUN curl -L https://www-us.apache.org/dist/hive/hive-3.1.2/apache-hive-3.1.2-bin
     cp ${HADOOP_HOME}/share/hadoop/common/lib/guava-27.0-jre.jar ${HIVE_HOME}/lib/
 
 COPY conf/hive-site.xml ${HIVE_HOME}/conf
+COPY conf/profile ${HIVE_HOME}/.profile
+COPY conf/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop
+COPY conf/core-site.xml ${HADOOP_HOME}/etc/hadoop
 
 RUN groupadd -r hive --gid=1000 && \
     useradd -r -g hive --uid=1000 -d ${HIVE_HOME} hive && \

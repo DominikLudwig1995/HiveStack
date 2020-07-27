@@ -18,16 +18,20 @@ services:
 
   hivedb:
     image: hive-metastore:master
+    container_name: hivedb
     restart: on-failure
     ports:
      - '10000:10000'
      - '9083:9083'
+     - '10002:10002'
     networks:
       - hadoop
       - jenkins
     volumes:
       - ${PWD}/data/hive/conf:/opt/apache-hive-3.1.2-bin/conf
       - ${PWD}/data/hive/udf:/opt/apache-hive-3.1.2-bin/udf
+      - ${PWD}/data/hdfs/hdfs-site.xml:/opt/hadoop-3.1.3/etc/hadoop/hdfs-site.xml
+      - ${PWD}/data/hdfs/core-site.xml:/opt/hadoop-3.1.3/etc/hadoop/core-site.xml
 
   jenkins:
     image: jenkinsci/blueocean
@@ -76,6 +80,89 @@ services:
       - monitoring
     volumes:
       - ${PWD}/data/grafana:/var/lib/grafana
+
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    restart: always
+    ports:
+      - 9870:9870
+      - 9999:9000
+      - 50070:50070
+      - 8020:8020
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+      - ${PWD}/data/hdfs/hdfs-site.xml:/opt/hadoop-3.2.1/etc/hadoop/hdfs-site.xml
+      - ${PWD}/data/hdfs/core-site.xml:/opt/hadoop-3.2.1/etc/hadoop/core-site.xml
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./hadoop.env
+    networks:
+      - hadoop
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    restart: always
+    volumes:
+      - hadoop_datanode:/hadoop/dfs/data
+      - ${PWD}/data/hdfs/hdfs-site.xml:/opt/hadoop-3.2.1/etc/hadoop/hdfs-site.xml
+      - ${PWD}/data/hdfs/core-site.xml:/opt/hadoop-3.2.1/etc/hadoop/core-site.xml
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+    env_file:
+      - ./hadoop.env
+    networks:
+      - hadoop
+
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: resourcemanager
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9999 namenode:9870 datanode:9864"
+    volumes:
+      - ${PWD}/data/hdfs/hdfs-site.xml:/opt/hadoop-3.2.1/etc/hadoop/hdfs-site.xml
+      - ${PWD}/data/hdfs/core-site.xml:/opt/hadoop-3.2.1/etc/hadoop/core-site.xml
+    env_file:
+      - ./hadoop.env
+    networks:
+      - hadoop
+
+  nodemanager1:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: nodemanager
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9999 namenode:9870 datanode:9864 resourcemanager:8088"
+    volumes:
+      - ${PWD}/data/hdfs/hdfs-site.xml:/opt/hadoop-3.2.1/etc/hadoop/hdfs-site.xml
+      - ${PWD}/data/hdfs/core-site.xml:/opt/hadoop-3.2.1/etc/hadoop/core-site.xml
+    env_file:
+      - ./hadoop.env
+    networks:
+      - hadoop
+
+  historyserver:
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
+    container_name: historyserver
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9999 namenode:9870 datanode:9864 resourcemanager:8088"
+    volumes:
+      - hadoop_historyserver:/hadoop/yarn/timeline
+      - ${PWD}/data/hdfs/hdfs-site.xml:/opt/hadoop-3.2.1/etc/hadoop/hdfs-site.xml
+      - ${PWD}/data/hdfs/core-site.xml:/opt/hadoop-3.2.1/etc/hadoop/core-site.xml
+    env_file:
+      - ./hadoop.env
+    networks:
+      - hadoop
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:
+  hadoop_historyserver:
 
 networks:
   hadoop:
