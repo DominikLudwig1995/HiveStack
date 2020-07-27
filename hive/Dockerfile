@@ -16,6 +16,7 @@ COPY conf/hive-site.xml ${HIVE_HOME}/conf
 COPY conf/profile ${HIVE_HOME}/.profile
 COPY conf/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop
 COPY conf/core-site.xml ${HADOOP_HOME}/etc/hadoop
+COPY conf/hive-config.sh ${HIVE_HOME}/bin
 
 RUN groupadd -r hive --gid=1000 && \
     useradd -r -g hive --uid=1000 -d ${HIVE_HOME} hive && \
