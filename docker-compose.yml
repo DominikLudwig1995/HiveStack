@@ -24,12 +24,14 @@ services:
      - '9083:9083'
     networks:
       - hadoop
+      - jenkins
     volumes:
       - ${PWD}/data/hive/conf:/opt/apache-hive-3.1.2-bin/conf
       - ${PWD}/data/hive/udf:/opt/apache-hive-3.1.2-bin/udf
 
   jenkins:
-    image: jenkins/jenkins:lts
+    image: jenkinsci/blueocean
+    container_name: jenkins_blueocean
     privileged: true
     user: root
     ports:
@@ -37,12 +39,11 @@ services:
       - 50000:50000
     networks:
       - hadoop
-    container_name: jenkins
+      - jenkins
     volumes:
       - ${PWD}/data/jenkins:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/local/bin/docker:/usr/local/bin/docker
       - ${PWD}/data/hive/udf:/var/jenkins_home/udf
+      - /var/run/docker.sock:/var/run/docker.sock
 
   influxdb:
     image: influxdb:latest
@@ -80,4 +81,6 @@ networks:
   hadoop:
     external: false
   monitoring:
+    external: false
+  jenkins:
     external: false
