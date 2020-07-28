@@ -12,11 +12,9 @@ RUN curl -L https://www-us.apache.org/dist/hive/hive-3.1.2/apache-hive-3.1.2-bin
     rm -f ${HIVE_HOME}/lib/guava-19.0.jar && \
     cp ${HADOOP_HOME}/share/hadoop/common/lib/guava-27.0-jre.jar ${HIVE_HOME}/lib/
 
-COPY conf/hive-site.xml ${HIVE_HOME}/conf
 COPY conf/profile ${HIVE_HOME}/.profile
 COPY conf/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop
 COPY conf/core-site.xml ${HADOOP_HOME}/etc/hadoop
-COPY conf/hive-config.sh ${HIVE_HOME}/bin
 
 RUN groupadd -r hive --gid=1000 && \
     useradd -r -g hive --uid=1000 -d ${HIVE_HOME} hive && \
@@ -31,11 +29,21 @@ RUN apt-get update && \
     apt-get install net-tools -y
 
 # MySQL
-RUN  apt-get install -y libmariadb-java mariadb-client && \
+RUN apt-get install -y libmariadb-java mariadb-client && \
     ln -s /usr/share/java/mariadb-java-client.jar ${HIVE_HOME}/lib/mariadb-java-client.jar
 
 # Bugfix
 RUN mkdir /tmp/hive && chmod 777 -R /tmp/hive && chown hive:hive -R /tmp/hive
+
+COPY conf/hive-config.sh ${HIVE_HOME}/bin
+
+# UDF and Hivemall
+RUN mkdir  ${HIVE_HOME}/udf && \
+    wget https://repo1.maven.org/maven2/org/apache/hivemall/hivemall-all/0.6.0-incubating/hivemall-all-0.6.0-incubating.jar -P ${HIVE_HOME}/udf && \
+    wget https://raw.githubusercontent.com/apache/incubator-hivemall/v0.6.0/resources/ddl/define-all.hive -P ${HIVE_HOME}/udf && \
+    wget https://raw.githubusercontent.com/apache/incubator-hivemall/v0.6.0/resources/ddl/define-all-as-permanent.hive  -P ${HIVE_HOME}/udf
+
+COPY conf/hiverc ${HIVE_HOME}/.hiverc
 
 # Usersettings
 USER hive
