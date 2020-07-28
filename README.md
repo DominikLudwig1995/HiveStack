@@ -15,7 +15,7 @@
 * https://acadgild.com/blog/hive-udf-python
 
 ## Utils
-* docker exec -u 0 -it docker-hive_hivedb_1 bash
+* docker exec -u 0 -it hivedb bash
 * docker-compose start
 
 ## MariaDB Fix
