@@ -40,7 +40,9 @@ COPY conf/hive-config.sh ${HIVE_HOME}/bin
 # UDF and Hivemall
 RUN mkdir  ${HIVE_HOME}/udf && \
     wget https://repo1.maven.org/maven2/org/apache/hivemall/hivemall-all/0.6.0-incubating/hivemall-all-0.6.0-incubating.jar -P ${HIVE_HOME}/udf && \
+    wget https://repo1.maven.org/maven2/org/apache/hivemall/hivemall-nlp/0.6.0-incubating/hivemall-nlp-0.6.0-incubating.jar -P ${HIVE_HOME}/udf && \
     wget https://raw.githubusercontent.com/apache/incubator-hivemall/v0.6.0/resources/ddl/define-all.hive -P ${HIVE_HOME}/udf && \
+    wget https://raw.githubusercontent.com/apache/incubator-hivemall/v0.6.0/resources/ddl/define-additional.hive -P ${HIVE_HOME}/udf && \
     wget https://raw.githubusercontent.com/apache/incubator-hivemall/v0.6.0/resources/ddl/define-all-as-permanent.hive  -P ${HIVE_HOME}/udf
 
 COPY conf/hiverc ${HIVE_HOME}/.hiverc

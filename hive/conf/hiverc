@@ -1,9 +1,13 @@
 # add jar /opt/apache-hive-3.1.2-bin/udf/hivemall-all-0.6.0-incubating.jar;
 # source /opt/apache-hive-3.1.2-bin/udf/define-all.hive;
 
+add jar /opt/apache-hive-3.1.2-bin/udf/hivemall-nlp-0.6.0-incubating.jar;
+source /opt/apache-hive-3.1.2-bin/udf/define-additional.hive ;
+
 # Copy file to hdfs
 # hadoop fs -mkdir -p /apps/hivemall
-# hadoop fs -put hivemall-all-xxx.jar /apps/hivemall
+# hadoop fs -put udf/hivemall-all-0.6.0-incubating.jar /apps/hivemall
+# hadoop fs -put udf/hivemall-nlp-0.6.0-incubating.jar /apps/hivemall
 
 # Create a new database
 # CREATE DATABASE IF NOT EXISTS hivemall;
@@ -11,6 +15,7 @@
 
 # Load functions
 # set hivevar:hivemall_jar=hdfs:///apps/hivemall/hivemall-all-0.6.0-incubating.jar;
+
 # source /opt/apache-hive-3.1.2-bin/udf/define-all-as-permanent.hive;
 
 # Test UDF
