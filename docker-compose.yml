@@ -48,6 +48,7 @@ services:
     volumes:
       - ${PWD}/data/jenkins:/var/jenkins_home
       - ${PWD}/data/hive/udf:/var/jenkins_home/udf
+      - /usr/local/bin/docker:/usr/bin/docker
       - /var/run/docker.sock:/var/run/docker.sock
 
   influxdb:
@@ -167,8 +168,8 @@ volumes:
 
 networks:
   hadoop:
-    external: false
+    external: true
   monitoring:
-    external: false
+    external: true
   jenkins:
-    external: false
+    external: true

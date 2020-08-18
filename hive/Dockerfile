@@ -54,4 +54,4 @@ EXPOSE 9083 10000
 
 # Endpoint
 ENTRYPOINT ["/bin/bash"]
-CMD ["/opt/apache-hive-3.1.2-bin/bin/hiveserver2"]
+CMD ["source ${HIVE_HOME}/.profile && /opt/apache-hive-3.1.2-bin/bin/hiveserver2"]
