@@ -55,7 +55,7 @@
 
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:mysql://docker-hive_mariadb_1:3306/metastore</value>
+        <value>jdbc:mysql://mariadb:3306/metastore</value>
     </property>
 
     <property>
