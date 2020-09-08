@@ -1,8 +1,10 @@
+add jar /opt/apache-hive-3.1.2-bin/udf/ApacheHiveHook-1.0-SNAPSHOT.jar;
+
 # add jar /opt/apache-hive-3.1.2-bin/udf/hivemall-all-0.6.0-incubating.jar;
 # source /opt/apache-hive-3.1.2-bin/udf/define-all.hive;
 
-add jar /opt/apache-hive-3.1.2-bin/udf/hivemall-nlp-0.6.0-incubating.jar;
-source /opt/apache-hive-3.1.2-bin/udf/define-additional.hive ;
+# add jar /opt/apache-hive-3.1.2-bin/udf/hivemall-nlp-0.6.0-incubating.jar;
+# source /opt/apache-hive-3.1.2-bin/udf/define-additional.hive ;
 
 # Copy file to hdfs
 # hadoop fs -mkdir -p /apps/hivemall

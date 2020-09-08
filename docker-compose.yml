@@ -180,8 +180,8 @@ services:
       - sonarnet
     environment:
       - SONARQUBE_JDBC_URL=jdbc:postgresql://postgresDB:5432/sonar
-      - SONARQUBE_JDBC_USERNAME=sonar
-      - SONARQUBE_JDBC_PASSWORD=sonar
+      - SONARQUBE_JDBC_USERNAME=root
+      - SONARQUBE_JDBC_PASSWORD=root
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
       - sonarqube_data:/opt/sonarqube/data
@@ -194,12 +194,31 @@ services:
     restart: on-failure
     networks:
       - sonarnet
+      - hadoop
+      - postgres
     environment:
-      - POSTGRES_USER=sonar
-      - POSTGRES_PASSWORD=sonar
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    ports:
+      - 5432:5432
     volumes:
       - postgresql:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin
+    container_name: pgadmin
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_LISTEN_PORT=80
+    ports:
+      - 8080:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - postgres
 
   mqtt:
     image: eclipse-mosquitto
@@ -226,6 +245,7 @@ volumes:
   sonarqube_bundled-plugins:
   postgresql:
   postgresql_data:
+  pgadmin-data:
   mqtt_data:
   mqtt_logs:
 
@@ -239,4 +259,6 @@ networks:
   sonarnet:
     external: true
   schemajoin:
+    external: true
+  postgres:
     external: true
