@@ -127,6 +127,7 @@ services:
       - hadoop
       - jenkins
       - sonarnet
+      - postgres
     volumes:
       - ${PWD}/data/jenkins:/var/jenkins_home
       - ${PWD}/data/hive/udf:/var/jenkins_home/udf
